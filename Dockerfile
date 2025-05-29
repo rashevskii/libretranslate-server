@@ -1,24 +1,7 @@
-FROM python:3.11-slim
+FROM libretranslate/libretranslate
 
-# Установка зависимостей
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    git \
-    wget \
-    libxml2-dev \
-    libxslt1-dev \
-    libffi-dev \
-    libjpeg-dev \
-    zlib1g-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Установка LibreTranslate из исходников
-RUN git clone https://github.com/LibreTranslate/LibreTranslate.git /app
-WORKDIR /app
-RUN pip install --upgrade pip && pip install -r requirements.txt
-
-# Открываем порт
+ENV PORT=5000
 EXPOSE 5000
 
-# Запуск сервера
-CMD ["python3", "main.py", "--host", "0.0.0.0", "--port", "5000"]
+CMD ["python3", "-m", "libretranslate"]
+
