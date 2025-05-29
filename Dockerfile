@@ -1,10 +1,11 @@
 FROM python:3.11-slim
 
-# Установка зависимостей
+# Установка системных зависимостей
 RUN apt-get update && apt-get install -y \
     build-essential \
     git \
     wget \
+    curl \
     libxml2-dev \
     libxslt1-dev \
     libffi-dev \
@@ -12,12 +13,18 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Установка LibreTranslate из исходников
+# Установка Poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
+ENV PATH="/root/.local/bin:$PATH"
+
+# Клонирование LibreTranslate
 RUN git clone https://github.com/LibreTranslate/LibreTranslate.git /app
 WORKDIR /app
-RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Открываем порт
+# Установка зависимостей через poetry
+RUN poetry config virtualenvs.create false && poetry install --no-dev
+
+# Открытие порта
 EXPOSE 5000
 
 # Запуск сервера
